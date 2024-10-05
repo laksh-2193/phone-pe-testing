@@ -115,7 +115,6 @@
         fetch('https://script.google.com/macros/s/AKfycbyZddY5l9xY8mo6ZtYWleSXjxHhP7bP1rXpGeeKiwAT-HU7f0AYtC0BcPjuG759L4AI/exec', { // Add your deployment URL here
           method: 'POST',
           body: formData,
-          mode: 'no-cors'
         })
         .then(response => response.json())
         .then(response => {
