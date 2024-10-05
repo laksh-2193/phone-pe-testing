@@ -104,6 +104,11 @@
             formData.append('myFileType', file.type);
             sendForm(formData);
           };
+
+          reader.onerror = function (error) {
+            console.error("File reading error:", error);
+            document.getElementById('statusMessage').innerHTML = '<p class="statusMessage error">File reading error: ' + error.message + '</p>';
+          };
         } else {
           sendForm(formData);
         }
@@ -111,13 +116,23 @@
 
       function sendForm(formData) {
         document.getElementById('statusMessage').innerHTML = 'Processing...';
+        console.log("Sending form data:", formData); // Debugging statement
 
         fetch('https://script.google.com/macros/s/AKfycbyZddY5l9xY8mo6ZtYWleSXjxHhP7bP1rXpGeeKiwAT-HU7f0AYtC0BcPjuG759L4AI/exec', { // Add your deployment URL here
           method: 'POST',
           body: formData,
+          // mode: 'no-cors' // Removed no-cors to allow proper handling of responses
         })
-        .then(response => response.json())
         .then(response => {
+          console.log("Fetch response:", response); // Debugging statement
+          // Check if response is ok (status in the range 200-299)
+          if (!response.ok) {
+            throw new Error('Network response was not ok: ' + response.statusText);
+          }
+          return response.json(); // Attempt to parse response as JSON
+        })
+        .then(response => {
+          console.log("Response data:", response); // Debugging statement
           var statusDiv = document.getElementById('statusMessage');
           if (response.status === 'success') {
             statusDiv.innerHTML = '<p class="statusMessage success">Form submitted successfully!</p>';
@@ -128,10 +143,10 @@
           }
         })
         .catch(error => {
+          console.error("Fetch error:", error); // Debugging statement
           document.getElementById('statusMessage').innerHTML = '<p class="statusMessage error">' + error.message + '</p>';
         });
       }
     </script>
-
   </body>
 </html>
